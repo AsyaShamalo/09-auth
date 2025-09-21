@@ -1,7 +1,7 @@
 import css from './NotesPage.module.css';
 import NoteListClient from './Notes.client';
 import { QueryClient, HydrationBoundary, dehydrate } from '@tanstack/react-query';
-import { fetchNotes } from '@/lib/api';
+import { fetchNotes } from '@/lib/api/clientApi';
 import { Metadata } from 'next';
 
 type Props = {

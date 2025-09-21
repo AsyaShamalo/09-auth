@@ -4,7 +4,7 @@ import Pagination from "@/components/Pagination/Pagination";
 import SearchBox from "@/components/SearchBox/SearchBox";
 import {useQuery, keepPreviousData} from "@tanstack/react-query";
 import {useDebouncedCallback} from 'use-debounce';
-import {fetchNotes, type NoteResponse } from '@/lib/api';
+import {fetchNotes, type NoteResponse } from '@/lib/api/clientApi';
 import {useState} from 'react';
 import css from './NotesPage.module.css';
 import { useRouter } from 'next/navigation';
@@ -14,10 +14,10 @@ type NoteListClientProps = {
 };
 
 const NoteListClient = ({ tag }: NoteListClientProps) => {
+  const router = useRouter();
   const [query, setQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
   const [page, setPage] = useState(1);
-  const router = useRouter();
   const debouncedSetQuery = useDebouncedCallback((value: string) => {
     setDebouncedQuery(value);
   }, 300);
@@ -32,7 +32,6 @@ const NoteListClient = ({ tag }: NoteListClientProps) => {
     placeholderData: keepPreviousData,
     refetchOnMount: false,
   });
-
 
   const totalPages = data?.totalPages || 0;
   return (

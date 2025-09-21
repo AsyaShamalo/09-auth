@@ -11,6 +11,7 @@
   "dependencies": {
     "@tanstack/react-query": "^5.85.5",
     "axios": "^1.11.0",
+    "cookie": "^1.0.2",
     "formic": "^0.0.10",
     "formik": "^2.4.6",
     "next": "15.5.0",
