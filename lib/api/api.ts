@@ -1,8 +1,16 @@
-import axios from 'axios';
+import axios from "axios"
+import type { Note } from "../../types/note"
 
-const baseURL = process.env.NEXT_PUBLIC_API_URL + '/api';
+export interface FetchNotes {
+	notes: Note[]
+	totalPages: number
+}
+
+export const getBaseURL = () => {
+	return process.env.NEXT_PUBLIC_API_URL
+}
 
 export const nextServer = axios.create({
-    baseURL: baseURL,
-    withCredentials: true,
+	baseURL: `${getBaseURL()}/api/`,
+	withCredentials: true,
 })
