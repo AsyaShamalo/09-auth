@@ -31,7 +31,7 @@ const EditProfile =  () => {
       try {
         await updateMe({username});
         setUser({username, email: userEmail, avatar: avatarUrl});
-        router.push('/profile');
+        router.back();
       } catch (error) {
         console.log('Error updating profile:', error);
       }

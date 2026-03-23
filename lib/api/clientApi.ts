@@ -30,31 +30,31 @@ export type UpdateMeRequest = {
 
 export const checkSession = async () => {
     const res = await nextServer.get('/auth/session');
-    return res;
+    return res.data;
 };
 
 export const getMe = async () => {
-  const res = await nextServer.get<User>('users/me');
+  const res = await nextServer.get<User>('/users/me');
   return res.data;
 };
 
 export const updateMe = async (data: UpdateMeRequest): Promise<User> => {
-    const res = await nextServer.patch<User>('users/me', data);
+    const res = await nextServer.patch<User>('/users/me', data);
     return res.data;
 }
 
 export const register = async (data: RegisterRequest) => {
-    const res = await nextServer.post<User>('auth/register', data);
+    const res = await nextServer.post<User>('/auth/register', data);
     return res.data
 }
 
 export const login = async (data: LoginRequest) => {
-    const res = await nextServer.post<User>('auth/login', data);
+    const res = await nextServer.post<User>('/auth/login', data);
     return res.data
 }
 
 export const logout = async (): Promise<void> => {
-    await nextServer.post('auth/logout');
+    await nextServer.post('/auth/logout');
 }
 
 export const fetchNotes = async (page: number, query: string, tag?: string): Promise<NoteResponse> => {
