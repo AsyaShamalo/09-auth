@@ -5,7 +5,7 @@ import { cookies } from 'next/headers';
 import { parse } from 'cookie';
 import { checkServerSession } from './lib/api/serverApi';
 
-const privateRoutes = ['/profile'];
+const privateRoutes = ['/profile', '/notes'];
 const publicRoutes = ['/sign-in', '/sign-up'];
 
 export async function proxy(request: NextRequest) {
@@ -14,8 +14,8 @@ export async function proxy(request: NextRequest) {
   const accessToken = cookieStore.get('accessToken')?.value;
   const refreshToken = cookieStore.get('refreshToken')?.value;
 
-  const isPublicRoute = publicRoutes.some((route) => pathname.startsWith(route));
-  const isPrivateRoute = privateRoutes.some((route) => pathname.startsWith(route));
+  const isPublicRoute = publicRoutes.some(route => pathname.startsWith(route));
+  const isPrivateRoute = privateRoutes.some(route => pathname.startsWith(route));
 
   if (!accessToken) {
     if (refreshToken) {

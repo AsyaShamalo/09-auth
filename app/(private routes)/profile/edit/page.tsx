@@ -26,7 +26,7 @@ const EditProfile =  () => {
       setUsername(e.target.value)
     }
 
-    const handleSubmit =async (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       try {
         await updateMe({username});
@@ -65,7 +65,7 @@ const EditProfile =  () => {
         <button type="submit" className={css.saveButton}>
           Save
         </button>
-        <button type="button" className={css.cancelButton} onClick={() => router.push('/profile')}  >
+        <button type="button" className={css.cancelButton} onClick={() => router.back()}  >
           Cancel
         </button>
       </div>
