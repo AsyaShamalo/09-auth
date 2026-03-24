@@ -29,10 +29,16 @@ export async function proxy(request: NextRequest) {
           const options = {
             expires: parsed.Expires ? new Date(parsed.Expires) : undefined,
             path: parsed.Path,
-            maxAge: Number(parsed['Max-Age']),
+            maxAge: parsed['Max-Age'] !== undefined && !isNaN(Number(parsed['Max-Age']))
+            ? Number(parsed['Max-Age'])
+            : undefined,
           };
-          if (parsed.accessToken) cookieStore.set('accessToken', parsed.accessToken, options);
-          if (parsed.refreshToken) cookieStore.set('refreshToken', parsed.refreshToken, options);
+          if (parsed.accessToken != null) { 
+            cookieStore.set("accessToken", parsed.accessToken, options);
+          }
+          if (parsed.refreshToken != null) { 
+            cookieStore.set("refreshToken", parsed.refreshToken, options);
+          }
         }
         
         if (isPublicRoute) {
@@ -44,11 +50,9 @@ export async function proxy(request: NextRequest) {
         }
         
         if (isPrivateRoute) {
-          return NextResponse.next({
-            headers: {
-              Cookie: cookieStore.toString(),
-            },
-          });
+          const response = NextResponse.next();
+          response.headers.set('Cookie', cookieStore.toString());
+          return response;
         }
       }
     }
