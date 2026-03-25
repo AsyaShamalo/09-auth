@@ -2,10 +2,11 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { parse } from 'cookie';
+// import { parse } from 'cookie';
 import { checkServerSession } from './lib/api/serverApi';
+import setCookieParser from 'set-cookie-parser'
 
-const privateRoutes = ['/profile', '/notes', '/notes/action', '/notes/filter'];
+const privateRoutes = ['/profile', '/notes'];
 const publicRoutes = ['/sign-in', '/sign-up'];
 
 export async function proxy(request: NextRequest) {
@@ -23,38 +24,28 @@ export async function proxy(request: NextRequest) {
       const setCookie = data.headers['set-cookie'];
 
       if (setCookie) {
-        const cookieArray = Array.isArray(setCookie) ? setCookie : [setCookie];
-        for (const cookieStr of cookieArray) {
-          const parsed = parse(cookieStr);
-          const options = {
-            expires: parsed.Expires ? new Date(parsed.Expires) : undefined,
-            path: parsed.Path,
-            maxAge: parsed['Max-Age'] !== undefined && !isNaN(Number(parsed['Max-Age']))
-            ? Number(parsed['Max-Age'])
-            : undefined,
-          };
-          if (parsed.accessToken != null) { 
-            cookieStore.set("accessToken", parsed.accessToken, options);
-          }
-          if (parsed.refreshToken != null) { 
-            cookieStore.set("refreshToken", parsed.refreshToken, options);
-          }
-        }
-        
-        if (isPublicRoute) {
-          return NextResponse.redirect(new URL('/', request.url), {
-            headers: {
-              Cookie: cookieStore.toString(),
-            },
-          });
-        }
-        
-        if (isPrivateRoute) {
-          const response = NextResponse.next();
-          response.headers.set('Cookie', cookieStore.toString());
-          return response;
-        }
-      }
+  const parsedCookies = setCookieParser.parse(setCookie)
+
+  const response = isPublicRoute
+    ? NextResponse.redirect(new URL('/', request.url))
+    : NextResponse.next()
+
+  for (const c of parsedCookies) {
+    if (!c.name || !c.value) continue
+
+    if (c.name === 'accessToken' || c.name === 'refreshToken') {
+      response.cookies.set({
+        name: c.name,
+        value: c.value,
+        ...(c.path && { path: c.path }),
+        ...(c.expires && { expires: c.expires }),
+        ...(c.maxAge && { maxAge: c.maxAge }),
+      })
+    }
+  }
+
+  return response
+}
     }
     
     if (isPublicRoute) {
@@ -84,8 +75,6 @@ export const config = {
 		"/profile/:path*",
 		"/notes",
 		"/notes/:path*",
-		"/notes/action/:action*",
-		"/notes/filter/:filter*",
 		"/sign-in",
 		"/sign-up",
 	],
