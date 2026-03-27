@@ -24,28 +24,28 @@ export async function proxy(request: NextRequest) {
       const setCookie = data.headers['set-cookie'];
 
       if (setCookie) {
-  const parsedCookies = setCookieParser.parse(setCookie)
+        const parsedCookies = setCookieParser.parse(setCookie)
 
-  const response = isPublicRoute
-    ? NextResponse.redirect(new URL('/', request.url))
-    : NextResponse.next()
+        const response = isPublicRoute
+          ? NextResponse.redirect(new URL('/', request.url))
+          : NextResponse.next()
 
-  for (const c of parsedCookies) {
-    if (!c.name || !c.value) continue
+        for (const c of parsedCookies) {
+          if (!c.name || !c.value) continue
 
-    if (c.name === 'accessToken' || c.name === 'refreshToken') {
-      response.cookies.set({
-        name: c.name,
-        value: c.value,
-        ...(c.path && { path: c.path }),
-        ...(c.expires && { expires: c.expires }),
-        ...(c.maxAge && { maxAge: c.maxAge }),
-      })
-    }
-  }
+          if (c.name === 'accessToken' || c.name === 'refreshToken') {
+            response.cookies.set({
+              name: c.name,
+              value: c.value,
+              ...(c.path && { path: c.path }),
+              ...(c.expires && { expires: c.expires }),
+              ...(c.maxAge && { maxAge: c.maxAge }),
+            })
+          }
+        }
 
-  return response
-}
+        return response
+      }
     }
     
     if (isPublicRoute) {
